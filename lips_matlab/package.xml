@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package>
+    <!-- Package Information -->
+    <name>lips_matlab</name>
+    <version>0.0.0</version>
+    <description>
+        MATLAB scripts for generating measurements for the LIDAR-inertial simulator.
+    </description>
+
+    <!-- Code Authors -->
+    <author email="pgeneva@udel.edu">Patrick Geneva</author>
+    <maintainer email="pgeneva@udel.edu">Patrick Geneva</maintainer>
+
+    <!-- Licensing -->
+    <license>MIT</license>
+
+    <!-- Dependencies which this package needs to build itself. -->
+    <buildtool_depend>catkin</buildtool_depend>
+
+    <!-- Dependencies needed to compile this package. -->
+    <build_depend>cmake_modules</build_depend>
+
+
+</package>

@@ -1,0 +1,18 @@
+<launch>
+
+    <arg name="datasetfolder" default="$(find lips_matlab)/output/spencer_02/" />
+
+    <node pkg="lips_simulator" type="pubSimulation" name="pubSimulation" output="screen" args="$(arg datasetfolder)">
+        <!-- Gyroscope Noise -->
+        <param name="gyroscope_noise_density"      type="double"  value="0.005"/> <!-- eth=0.005 -->
+        <param name="gyroscope_random_walk"        type="double"  value="4.0e-06"/> <!-- eth=4.0e-06 -->
+        <param name="gyroscope_bias_init"          type="double"  value="0.01"/> <!-- default=0.01 -->
+        <!-- Accelerometer Noise -->
+        <param name="accelerometer_noise_density"  type="double"  value="0.01"/> <!-- eth=0.01 -->
+        <param name="accelerometer_random_walk"    type="double"  value="0.0002"/> <!-- eth=0.0002 -->
+        <param name="accelerometer_bias_init"      type="double"  value="0.1"/> <!-- default=0.1-->
+        <!-- Lidar point cloud noise -->
+        <param name="sigma_lidar_pts"              type="double"  value="0.03"/> <!-- default=0.03 -->
+    </node>
+
+</launch>
