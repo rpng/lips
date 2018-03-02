@@ -92,7 +92,7 @@ void load_files(std::string path) {
         ROS_ERROR("ERROR: %s",(path+"config_rates.txt").c_str());
         std::exit(EXIT_FAILURE);
     }
-    while(std::getline(file01, line01)) {
+    while(std::getline(file01, line01) && ros::ok()) {
         std::string field;
         std::istringstream s(line01);
         // Parse IMU rate
@@ -115,7 +115,7 @@ void load_files(std::string path) {
         ROS_ERROR("ERROR: %s",(path+"true_poseimu.txt").c_str());
         std::exit(EXIT_FAILURE);
     }
-    while(std::getline(file01, line01)) {
+    while(std::getline(file01, line01) && ros::ok()) {
         // Get the pose for this line
         geometry_msgs::PoseStamped pose;
         pose = parsePoseLine(basetime, "global", line01);
@@ -132,7 +132,7 @@ void load_files(std::string path) {
         ROS_ERROR("ERROR: %s",(path+"true_measimu.txt").c_str());
         std::exit(EXIT_FAILURE);
     }
-    while(std::getline(file01, line01)) {
+    while(std::getline(file01, line01) && ros::ok()) {
         // Get the measurement for this line
         sensor_msgs::Imu meas_true;
         meas_true = parseImuMeasurementLine(basetime, "imu", line01);
@@ -156,7 +156,7 @@ void load_files(std::string path) {
         ROS_ERROR("ERROR: %s",(path+"true_poselidar.txt").c_str());
         std::exit(EXIT_FAILURE);
     }
-    while(std::getline(file01, line01)) {
+    while(std::getline(file01, line01) && ros::ok()) {
         // Get the pose for this line
         geometry_msgs::PoseStamped pose;
         pose = parsePoseLine(basetime, "global", line01);
@@ -180,7 +180,7 @@ void load_files(std::string path) {
         ROS_ERROR("ERROR: %s",(path+"true_idsplanes.txt").c_str());
         std::exit(EXIT_FAILURE);
     }
-    while(std::getline(file01, line01) && std::getline(file02, line02)) {
+    while(std::getline(file01, line01) && std::getline(file02, line02) && ros::ok()) {
         // Get the measurement for this line
         lips_comm::PlaneMeasurementArray meas_true;
         meas_true = parsePlaneMeasurementLine(basetime, "lidar", line01, line02);
