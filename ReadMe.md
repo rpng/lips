@@ -11,7 +11,7 @@ The simplest way to get started is to clone this repository into your ROS worksp
 * **lips_simulator**: This package has a publisher node that takes the MATLAB exported files and publish on ROS.
 
 
-## Screenshots / Pictures
+## Example Simulation
 
 ![example lidar run](pictures/example_run.png)
 

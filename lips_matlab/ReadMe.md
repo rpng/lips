@@ -13,12 +13,8 @@ Theses points can now be used in estimation as each point intersection has a cor
 1. First open the matlab folder in matlab
 2. Specify the floorplane, trajectory file, and the LIDAR specification
 3. Run the "MAINSCRIPT.m" file to generate the IMU, LIDAR, and LIDAR planes clouds
-4. Copy files saved in the "lins_simulator/output/" to a subfolder
-5. In your ROS workspace one can launch the node to publish this data
-    * Example command: `rosrun lins_simulator pubSimulation <path_to_data>`
-    * Can create a launch file to edit the noise values
-    * Publishes true pose and noisy measurements
-6. Can record a rosbag of the data, or play it normally
+4. Copy files saved in the "lips_simulator/output/" to a subfolder
+5. Publish onto ROS using the lips_simulator package
 
 
 ## Floorplan File Format
@@ -26,14 +22,15 @@ Theses points can now be used in estimation as each point intersection has a cor
 * Each plane is made of a 2D line between the start and end point
 * Note that this is in 2D and is later extruded into 3D
 * start_x, start_y, end_x, end_y
+* Floorplan should be units of "feet"
 
 
 ## Trajectory File Format
 
 * A trajectory is in 3D in respect to the origin of the floorplan
-* The trajectory units are the same as the floorplan's
 * We apply the rotations as follows:
-* rot_FRAMEtoG = rotz(yaw)*roty(pitch)*rotx(roll)
+* `rot_ItoG = rotz(yaw)*roty(pitch)*rotx(roll)`
 * The user needs to specify waypoints at a high enough frequency that the spline works
-* x,y,z,yaw,pitch,roll
+* time,x,y,z,yaw,pitch,roll
+* The waypoints are of the IMU sensor, the LIDAR is calculated using the specified transform
 
