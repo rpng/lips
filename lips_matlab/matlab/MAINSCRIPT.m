@@ -9,7 +9,7 @@ addpath('functions/lips/')
 
 %% CONFIG INFORMATION IS ALL IN HERE
 
-showrealtimeplot = 0; %if we should display a realtime plot, 0=faster
+showrealtimeplot = 1; %if we should display a realtime plot, 0=faster
 
 pathplanes = '../input/floorplan_spencer_small.txt';
 pathpath = '../input/path_spencer_small_01.txt';
@@ -21,7 +21,7 @@ lidarrate = 1; %hz
 
 gravityglobal = [0,0,9.81]; %m/s^2
 
-totalruntime = 200; %seconds
+totalruntime = 120; %seconds
 
 lidarzenith = [3.197,0.000,-3.197,-6.360,-9.465,-12.491,-15.424,-18.249]; %deg
 %lidarzenith = [0.000]; %deg
@@ -292,8 +292,8 @@ for zz=1:size(trajectory.datalidar.time,2)
         for ii=1:size(hits,1)
             drawPoint3d(hits(ii,1),hits(ii,2),hits(ii,3),'.-k');
             hold on;
-            %drawPolyline3d([pos_IMUinG(1,1),hits(ii,1)],[pos_IMUinG(1,2),hits(ii,2)],[pos_IMUinG(1,3),hits(ii,3)],'-k')
-            hold on;
+            %drawPolyline3d([pos_LIDARinG(1,1),hits(ii,1)],[pos_LIDARinG(1,2),hits(ii,2)],[pos_LIDARinG(1,3),hits(ii,3)],'-k')
+            %hold on;
         end
         % Draw current position
         drawPoint3d(pos_LIDARinG(1,1),pos_LIDARinG(1,2),pos_LIDARinG(1,3),'or'); hold on;

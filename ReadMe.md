@@ -12,10 +12,11 @@ Please read the guides below on how to get started, and see the ReadMe files in 
 * **lips_simulator**: This package has a publisher node that takes the MATLAB exported files and publish on ROS.
 
 
-## Example Simulation
+## Example Simulations
 
-![example lidar run](pictures/example_run.png)
+![example lidar run](pictures/example_run_04.png)
 
+![example lidar run](pictures/example_run_02.png)
  
 
 
@@ -23,17 +24,17 @@ Please read the guides below on how to get started, and see the ReadMe files in 
 
 * To get up an running using the existing datasets, please perform the following.
 * Download one of the following datasets
-    * Spencer Lab Large Path 01 - [link]()
-    * Spencer Lab Small Path 01 - [link]()
-    * Spencer Lab Small Path 02 - [link]()
-* Extract theses datasets into the `/lips_matlab/output/<name_of_dataset>/`
-* Launch RVIZ and load the example config in the `lips_simulator` package
+    * Spencer Lab Large Path 01 - [download (524MB)](https://drive.google.com/file/d/1Z2DIK18WNVal9TaXaP_viYBxn8iPKZ0n/view?usp=sharing)
+    * Spencer Lab Small Path 01 - [download (56MB)](https://drive.google.com/file/d/1BhNEDcnNCD0MKM4sr1uBedKvbcqbi2sC/view?usp=sharing)
+    * Spencer Lab Small Path 02 - [download (13MB)](https://drive.google.com/file/d/1_jRh9c9AHg0pxAzyyFX5wJH5rcpVbhES/view?usp=sharing)
+* Extract the datasets into the `/lips_matlab/output/<name_of_dataset>/`
+* Launch RVIZ and load the example config in the `/lips_simulator/launch/` folder
 * Launch your specific launch file to publish the simulation
     * `roslaunch lips_simulator spencer_large_01.launch`
     * `roslaunch lips_simulator spencer_small_01.launch`
     * `roslaunch lips_simulator spencer_small_02.launch`
-* Examine the RVIZ output and the published topics
-* Edit the launch files as needed to new generated datasets, or different noise properties
+* Examine the RVIZ output and published topics
+* Edit the launch files as needed to new generated datasets or change noise properties
 
 
 
@@ -46,7 +47,7 @@ Please read the guides below on how to get started, and see the ReadMe files in 
     * Create a new text file in the `/lips_matlab/input/` folder
     * A floorplan is made up of pairs of points that create a line
     * `start_x, start_y, end_x, end_y`
-    * This floorplan will be extracted up vertically
+    * This floorplan will be extruded vertically
     * Should be in the unit of `feet`
     * Use the `plot_2d_floorplan.m` script to help create
 * To create your own trajectory do the following:
@@ -58,9 +59,9 @@ Please read the guides below on how to get started, and see the ReadMe files in 
     * Use the `plot_3d_spline.m` script to help create
 * After creating your floorplan and trajectory we can specify the sensor properties
 * Open the `MAINSCRIPT.m` file and edit the paths to the floorplan and trajectory files
-* Specify the sensor properties you want to use
+* Specify the sensor properties you want to use in the top of the file (see matlab comments for units)
 * Run the `MAINSCRIPT.m` to generate the groundtruth measurement data
 * Move files from the `/lips_matlab/output/` folder to a sub-folder
-* Follow the "Quicker Quickstart Guide" to publish this new simulation on ROS
+* Follow the "Quicker Quickstart Guide" to publish this new simulation data on ROS
 
 
