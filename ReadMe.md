@@ -8,7 +8,7 @@ Please read the guides below on how to get started, and see the ReadMe files in 
 ## Package Descriptions
 
 * **lips_comm**: This package has the custom message files that the simulator should publish.
-* **lips_matlab**: Contains MATLAB scripts to generate simulated lidar point clouds moving through a 3D environment.
+* **lips_matlab**: Contains MATLAB scripts to generate simulated LiDAR sensor moving through a 3D environment.
 * **lips_simulator**: This package has a publisher node that takes the MATLAB exported files and publish on ROS.
 
 
@@ -23,7 +23,7 @@ Please read the guides below on how to get started, and see the ReadMe files in 
 
 * To get up an running using the existing datasets, please perform the following.
 * Download one of the following datasets
-    * Spencer Lab Large - [link]()
+    * Spencer Lab Large Path 01 - [link]()
     * Spencer Lab Small Path 01 - [link]()
     * Spencer Lab Small Path 02 - [link]()
 * Extract theses datasets into the `/lips_matlab/output/<name_of_dataset>/`

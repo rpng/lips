@@ -6,16 +6,15 @@
 #include <unistd.h>
 #include <random>
 
+#include <tf/tf.h>
 #include <ros/ros.h>
 #include <ros/time.h>
-#include <tf/tf.h>
 #include <tf/transform_broadcaster.h>
 #include <sensor_msgs/Imu.h>
 #include <nav_msgs/Path.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <pcl_conversions/pcl_conversions.h>
 #include <visualization_msgs/MarkerArray.h>
-#include <sip.h>
 
 
 #include "lips_comm/PlaneMeasurement.h"
@@ -46,11 +45,10 @@ size_t index_ml = 0;
 tf::TransformBroadcaster* mTfBr;
 ros::Publisher pubPoseIMU;
 ros::Publisher pubPoseLIDAR;
-ros::Publisher pubPathIMU;
 ros::Publisher pubPathLIDAR;
 ros::Publisher pubMeasurementIMU;
 ros::Publisher pubMeasurementLIDAR;
-ros::Publisher pubCloudLIDAR;
+ros::Publisher pubMeasurementCloudLIDAR;
 
 double gyroscope_noise_density; //rad/s/sqrt(hz)
 double accelerometer_noise_density; //m/s^2/sqrt(hz)
@@ -60,10 +58,9 @@ Eigen::Vector3d gyroscope_bias;
 Eigen::Vector3d accelerometer_bias;
 double sigma_lidar_pts; //meters
 
+
 // Path variables needed
-unsigned int poses_seq_imu = 0;
 unsigned int poses_seq_lidar = 0;
-vector<geometry_msgs::PoseStamped> posespath_imu;
 vector<geometry_msgs::PoseStamped> posespath_lidar;
 
 
@@ -76,6 +73,7 @@ vector<geometry_msgs::PoseStamped> posespath_lidar;
 void load_files(std::string path) {
 
     // Base ROS time we will add all the simulated times too
+    // This is fixed since we want each simulation to at the same time with different noise
     ros::Time basetime = ros::Time(1519060444);
 
     // Master file stream object
@@ -206,7 +204,7 @@ void load_files(std::string path) {
 
 
     // Check that we at least have one measurement of each
-    if(poses_imu.size() < 1 || measurements_imu.size() < 1 || poses_lidar.size() < 1 || measurements_lidar.size() < 1) {
+    if(poses_imu.empty() || measurements_imu.empty() || poses_lidar.empty() || measurements_lidar.empty()) {
         ROS_ERROR("ERROR: Need at least one of each type of measurement...cannot continue.");
         std::exit(EXIT_FAILURE);
     }
@@ -230,9 +228,7 @@ void setup_publishers(ros::NodeHandle nh) {
     pubPoseLIDAR = nh.advertise<geometry_msgs::PoseStamped>("/lips_sim/truepose_lidar", 2);
     ROS_INFO("Publishing: %s", pubPoseLIDAR.getTopic().c_str());
 
-    // True pose paths
-    //pubPathIMU = nh.advertise<nav_msgs::Path>("/lips_sim/truepath_imu", 2);
-    //ROS_INFO("Publishing: %s", pubPathIMU.getTopic().c_str());
+    // True pose path
     pubPathLIDAR = nh.advertise<nav_msgs::Path>("/lips_sim/truepath_lidar", 2);
     ROS_INFO("Publishing: %s", pubPathLIDAR.getTopic().c_str());
 
@@ -242,16 +238,16 @@ void setup_publishers(ros::NodeHandle nh) {
     pubMeasurementLIDAR = nh.advertise<lips_comm::PlaneMeasurementArray>("/lips_sim/data_lidar", 2);
     ROS_INFO("Publishing: %s", pubMeasurementLIDAR.getTopic().c_str());
 
-    // Point cloud visualization
-    pubCloudLIDAR = nh.advertise<sensor_msgs::PointCloud2>("/lips_sim/planes_cloud", 2);
-    ROS_INFO("Publishing: %s", pubCloudLIDAR.getTopic().c_str());
+    // Point cloud
+    pubMeasurementCloudLIDAR = nh.advertise<sensor_msgs::PointCloud2>("/lips_sim/data_cloud", 2);
+    ROS_INFO("Publishing: %s", pubMeasurementCloudLIDAR.getTopic().c_str());
 
 }
 
 /**
  * \brief This will read in config values from the launch file for our sigmas
  */
-void setup_config(ros::NodeHandle nh) {
+void setup_config(ros::NodeHandle& nh) {
 
     // IMU values from sensor sheet and allan-devation chart
     nh.param<double>("gyroscope_noise_density", gyroscope_noise_density, 0.005);
@@ -299,9 +295,10 @@ void setup_config(ros::NodeHandle nh) {
 
 
 /**
- * \brief Will publish a marker set of the current planes that have been extracted
+ * \brief Convert the plane measurements into a full point cloud that can be used as a measurement
+ * Or just for visulization. Will have plane IDs as the intensity values of the XYZI point.
  */
-void publish_marker_planes(lips_comm::PlaneMeasurementArray msg) {
+sensor_msgs::PointCloud2 plane_measurement_to_cloud(lips_comm::PlaneMeasurementArray msg) {
 
     // Cloud where the intensity is what plane it is a part of
     pcl::PointCloud<pcl::PointXYZI> laserCloud;
@@ -329,8 +326,7 @@ void publish_marker_planes(lips_comm::PlaneMeasurementArray msg) {
     pcl::toROSMsg(laserCloud, msgOut);
     msgOut.header.stamp = msg.header.stamp;
     msgOut.header.frame_id = msg.header.frame_id;
-    pubCloudLIDAR.publish(msgOut);
-
+    return msgOut;
 }
 
 
@@ -383,15 +379,6 @@ void execute_publishing() {
             tfPose.setOrigin(orig);
             mTfBr->sendTransform(tfPose);
 
-            // Publish the path (to much data for RVIZ, remove for now)
-            //posespath_imu.push_back(poses_imu.at(index_pi));
-            //nav_msgs::Path patharr;
-            //patharr.header.stamp = poses_imu.at(index_pi).header.stamp;
-            //patharr.header.seq = poses_seq_imu++;
-            //patharr.header.frame_id = "global";
-            //patharr.poses = posespath_imu;
-            //pubPathIMU.publish(patharr);
-
             // Move forward in time
             index_pi++;
         }
@@ -436,8 +423,12 @@ void execute_publishing() {
         if(timeml <= timecurr) {
             // Publish our normal measurement
             pubMeasurementLIDAR.publish(measurements_lidar.at(index_ml));
-            // Publish our colored point cloud for RVIZ
-            publish_marker_planes(measurements_lidar.at(index_ml));
+
+            // Publish our measurement point cloud
+            sensor_msgs::PointCloud2 cloud_meas;
+            cloud_meas = plane_measurement_to_cloud(measurements_lidar.at(index_ml));
+            pubMeasurementCloudLIDAR.publish(cloud_meas);
+
             // Move forward in time
             index_ml++;
         }

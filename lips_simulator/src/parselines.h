@@ -93,7 +93,7 @@ geometry_msgs::PoseStamped parsePoseLine(ros::Time basetime, std::string frame, 
 
 
 /**
- * \brief Given a string line, this will create a ROS pose object from the simulated data format
+ * \brief Given a string line, this will create an IMU measurement from the simulated data format
  */
 sensor_msgs::Imu parseImuMeasurementLine(ros::Time basetime, std::string frame, std::string line) {
     // Temp variables
@@ -158,7 +158,7 @@ sensor_msgs::Imu parseImuMeasurementLine(ros::Time basetime, std::string frame, 
 
 
 /**
- * \brief Given a string line, this will create a ROS pose object from the simulated data format
+ * \brief Given a string line, this will create a plane measurement array from the simulated data format
  */
 lips_comm::PlaneMeasurementArray parsePlaneMeasurementLine(ros::Time basetime, std::string frame, std::string lineMEAS, std::string lineIDS) {
     // Temp variables

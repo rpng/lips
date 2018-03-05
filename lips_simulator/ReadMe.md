@@ -5,6 +5,17 @@ This will publish onto the ROS messaging system for algorithms to use.
 Noise is added here, as the MATLAB scripts are only for generating the *true* trajectories and measurements.
 Please seen the example launch files for the sensor parameters that can be specified.
 
+## Published Topics
+
+* `/lips_sim/truepose_imu` - True pose of the IMU sensor
+* `/lips_sim/truepose_lidar` - True pose of the LiDAR sensor
+* `/lips_sim/truepath_lidar` - Path for RVIZ visulization of the true trajectory
+* `/lips_sim/data_imu` - Normal IMU message
+* `/lips_sim/data_lidar` - Custom data type that holds sets of points that are grouped by planes
+* `/lips_sim/data_cloud` - Normal pointcloud2 XYZI of the LiDAR points in the LiDAR frame of reference.
+
+
+
 ## Measurement Noise Models
 
 #### IMU Noise Model
