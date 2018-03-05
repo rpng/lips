@@ -1,4 +1,4 @@
-function [ rays ] = gencirclerays( pos_LIDARinG, rpy_LIDARtoG, azimuth, resolution, mag )
+function [ rays ] = gencirclerays( pos_LIDARinG, rpy_LIDARtoG, zenith, resolution, mag )
 %GENCIRCLERAYS Generates 360 deg of rays given the two angles
 %   We need the origin position, the azimuth angle from the horizontial,
 %   the resolution of the lidar horizontially, and then the magnitude we
@@ -24,9 +24,9 @@ for deg=0:resolution:360
     ray(1,3) = pos_LIDARinG(1,3);
     % Next three are the "direction" of the ray
     % Convert spherical coordinates to our x,y,z cartesian
-    ray(1,4) = mag*sind(90-azimuth)*cosd(deg);
-    ray(1,5) = mag*sind(90-azimuth)*sind(deg);
-    ray(1,6) = mag*cosd(90-azimuth);
+    ray(1,4) = mag*sind(90-zenith)*cosd(deg);
+    ray(1,5) = mag*sind(90-zenith)*sind(deg);
+    ray(1,6) = mag*cosd(90-zenith);
     % Now those rays are in the local LIDAR frame
     % So lets rotate them into the global (note rotx,y,z requires degrees)
     rot_LIDARtoG = rotz(180/pi*rpy_LIDARtoG(1,3))*roty(180/pi*rpy_LIDARtoG(1,2))*rotx(180/pi*rpy_LIDARtoG(1,1));

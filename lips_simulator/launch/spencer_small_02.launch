@@ -1,6 +1,6 @@
 <launch>
 
-    <arg name="datasetfolder" default="$(find lips_matlab)/output/spencer_01_v2_5hz/" />
+    <arg name="datasetfolder" default="$(find lips_matlab)/output/spencer_small_02/" />
 
     <node pkg="lips_simulator" type="pubSimulation" name="pubSimulation" output="screen" args="$(arg datasetfolder)">
         <!-- Gyroscope Noise -->

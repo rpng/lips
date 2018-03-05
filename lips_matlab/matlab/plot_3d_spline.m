@@ -9,15 +9,15 @@ addpath('functions/lips/')
 
 %% CONFIG INFORMATION IS ALL IN HERE
 
-pathplanes = '../input/floorplan_2d_spencer_v2.txt';
-pathpath = '../input/path_spencer_01_v2.txt';
+pathplanes = '../input/floorplan_spencer_small.txt';
+pathpath = '../input/path_spencer_small_01.txt';
 
 planeheight = 3; %meters
 
 imurate = 200; %hz
 lidarrate = 0.5; %hz
 
-totalruntime = 360; %seconds
+totalruntime = 240; %seconds
 
 
 
@@ -112,12 +112,14 @@ xlabel('x-axis (m)')
 ylabel('y-axis (m)')
 zlabel('z-axis (m)')
 view([0 90])
-set(gcf,'Position',[0 0 1200 400])
+
+
 
 
 %% PLOT SAVE TO FILE FOR PAPER FIGURES
-save_to_file = 1;
+save_to_file = 0;
 if save_to_file
+    set(gcf,'Position',[0 0 1200 400])
     view([-25 25]);
     set(get(gca,'ylabel'),'rotation',-45)
     print(fh,'-dpng','-r500','trajectory_3d.png')

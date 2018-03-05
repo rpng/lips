@@ -8,7 +8,7 @@ addpath('functions/lips/')
 
 
 % Load our data from file
-path = '../input/floorplan_2d_spencer_v2.txt';
+path = '../input/floorplan_spencer_small.txt';
 planes2d = load_2dplanedata(path);
 
 % Convert to polygons with a height of 8ft

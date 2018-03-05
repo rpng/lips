@@ -9,7 +9,7 @@ addpath('functions/lips/')
 
 
 % Load our data from file
-path = '../input/floorplan_2d_spencer.txt';
+path = '../input/floorplan_spencer_small.txt';
 planes2d = load_2dplanedata(path);
 
 % Convert to polygons with a height of 8ft
@@ -18,15 +18,15 @@ planes3d = planes2dtopolygons3d(planes2d, height);
 
 
 % Next up, set our position to where we want to shoot a ray out
-pos = [12 12 4];
-ypr = [0 0 0];
-resolution = 5;
-distance = 10;
+pos = [12 12 4]; % meters
+ypr = [0 0 0]; % rad
+resolution = 5; % deg
+distance = 10; % meter (just for viz)
+zenith = 0; % deg
 
 
 % Generate our rays
-rays1 = gencirclerays(pos, ypr, 0, resolution, distance);
-%rays2 = gencirclerays(pos, ypr, -18, resolution, distance);
+rays1 = gencirclerays(pos, ypr, zenith, resolution, distance);
 
 % Interect with our planes/polygons
 %[hits, polyids, rayids] = intersectrayspolys(rays1, planes3d);

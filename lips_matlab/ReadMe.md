@@ -31,6 +31,6 @@ Theses points can now be used in estimation as each point intersection has a cor
 * We apply the rotations as follows:
 * `rot_ItoG = rotz(yaw)*roty(pitch)*rotx(roll)`
 * The user needs to specify waypoints at a high enough frequency that the spline works
-* time,x,y,z,yaw,pitch,roll
+* time,x(ft),y(ft),z(ft),yaw(deg),pitch(deg),roll(deg)
 * The waypoints are of the IMU sensor, the LIDAR is calculated using the specified transform
 

@@ -9,20 +9,22 @@ addpath('functions/lips/')
 
 %% CONFIG INFORMATION IS ALL IN HERE
 
-pathplanes = '../input/floorplan_2d_spencer_v2.txt';
-pathpath = '../input/path_spencer_01_v2.txt';
+showrealtimeplot = 0; %if we should display a realtime plot, 0=faster
+
+pathplanes = '../input/floorplan_spencer_small.txt';
+pathpath = '../input/path_spencer_small_01.txt';
 
 planeheight = 3; %meters
 
-imurate = 800; %hz
-lidarrate = 5; %hz
+imurate = 500; %hz
+lidarrate = 1; %hz
 
 gravityglobal = [0,0,9.81]; %m/s^2
 
-totalruntime = 360; %seconds
+totalruntime = 200; %seconds
 
-lidarazimuth = [3.197,0.000,-3.197,-6.360,-9.465,-12.491,-15.424,-18.249]; %deg
-%lidarazimuth = [0.000]; %deg
+lidarzenith = [3.197,0.000,-3.197,-6.360,-9.465,-12.491,-15.424,-18.249]; %deg
+%lidarzenith = [0.000]; %deg
 lidarresolution = 0.25; %deg
 
 timestill = 3; %seconds we should be stationary in the begining
@@ -229,7 +231,9 @@ planes3d_PinG = addhorzplane(planes2d_PinG, planes3d_PinG, planeheight);
 
 %% NOW FOR EACH LIDAR STATE WE WILL GET THE MEASUREMENTS
 
+if showrealtimeplot
 fg1 = figure('Name','LIDAR ray-intersections');
+end
 
 % loop through each lidar state
 for zz=1:size(trajectory.datalidar.time,2)
@@ -247,15 +251,15 @@ for zz=1:size(trajectory.datalidar.time,2)
     %delete(gcp('nocreate'));
     % Set the properties of the cluster
     %myCluster = parcluster('local');
-    %myCluster.NumWorkers = size(lidarazimuth,2);
+    %myCluster.NumWorkers = size(lidarzenith,2);
     %saveProfile(myCluster);
-    %parpool('local',size(lidarazimuth,2));
-    %parfor ii=1:size(lidarazimuth,2)
-    for ii=1:size(lidarazimuth,2)
+    %parpool('local',size(lidarzenith,2));
+    %parfor ii=1:size(lidarzenith,2)
+    for ii=1:size(lidarzenith,2)
         % get our angle
-        azimuth = lidarazimuth(1,ii);
+        zenith = lidarzenith(1,ii);
         % 3. generate our rays
-        rays_inG = gencirclerays(pos_LIDARinG, rpy_LIDARtoG, azimuth, lidarresolution, 1);
+        rays_inG = gencirclerays(pos_LIDARinG, rpy_LIDARtoG, zenith, lidarresolution, 1);
         % 4. intersect the rays
         %[hitst, polyidst, rayidst] = intersectrayspolys(rays_inG, planes3d_PinG);
         [hitst, polyidst, rayidst] = kevinsPlaneIntersection(rays_inG, planes3d_PinG);
@@ -275,43 +279,45 @@ for zz=1:size(trajectory.datalidar.time,2)
     trajectory.datalidar.planeids{end+1} = polyids;
     trajectory.datalidar.rayids{end+1} = rayids;
     trajectory.datalidar.points{end+1} = hits;
-%     % 8. plot for the user to see
-%     set(0, 'CurrentFigure', fg1)
-%     clf(fg1)
-%     % Plot the polygons
-%     for ii=1:size(planes3d_PinG,2)
-%         drawPolygon3d(planes3d_PinG{ii}(:,1),planes3d_PinG{ii}(:,2),planes3d_PinG{ii}(:,3),'b');
-%         hold on;
-%     end
-%     % Plot the intersection points and a ray to them
-%     for ii=1:size(hits,1)
-%         drawPoint3d(hits(ii,1),hits(ii,2),hits(ii,3),'.-k');
-%         hold on;
-%         %drawPolyline3d([pos_IMUinG(1,1),hits(ii,1)],[pos_IMUinG(1,2),hits(ii,2)],[pos_IMUinG(1,3),hits(ii,3)],'-k')
-%         hold on;
-%     end
-%     % Draw current position
-%     drawPoint3d(pos_LIDARinG(1,1),pos_LIDARinG(1,2),pos_LIDARinG(1,3),'or'); hold on;
-%     drawCoordinates3d([pos_LIDARinG(1,1),pos_LIDARinG(1,2),pos_LIDARinG(1,3)],[rpy_LIDARtoG(1,1),rpy_LIDARtoG(1,2),rpy_LIDARtoG(1,3)],1); hold on;
-%     % Draw the global frame
-%     drawCoordinates3d([0,0,0],[0,0,0],2)   
-%     % Plot path points and their IDs (the given waypoints in IMU frame)
-%     for ii=1:size(path_IMUinG,1)
-%         drawPoint3d(path_IMUinG(ii,1),path_IMUinG(ii,2),path_IMUinG(ii,3),'or'); hold on;
-%         drawCoordinates3d([path_IMUinG(ii,1),path_IMUinG(ii,2),path_IMUinG(ii,3)],[path_IMUinG(ii,4),path_IMUinG(ii,5),path_IMUinG(ii,6)],1); hold on;
-%     end
-%     text(path_IMUinG(:,1),path_IMUinG(:,2),path_IMUinG(:,3),[repmat('  ',size(path_IMUinG,1),1), num2str((1:size(path_IMUinG,1))')])
-%     hold on;
-%     % Plot the spline (use IMU rate so it is smooth)
-%     plot3(ppval(pp_IMUinG{1},timeimu),ppval(pp_IMUinG{2},timeimu),ppval(pp_IMUinG{3},timeimu),'r');
-%     hold on;
-%     % Do the labels and the such...
-%     axis equal
-%     xlabel('x-direction (meters)')
-%     ylabel('y-direction (meters)')
-%     zlabel('z-direction (meters)')
-%     %view([0 90])
-%     drawnow;
+    % 8. plot for the user to see
+    if showrealtimeplot
+        set(0, 'CurrentFigure', fg1)
+        clf(fg1)
+        % Plot the polygons
+        for ii=1:size(planes3d_PinG,2)
+            drawPolygon3d(planes3d_PinG{ii}(:,1),planes3d_PinG{ii}(:,2),planes3d_PinG{ii}(:,3),'b');
+            hold on;
+        end
+        % Plot the intersection points and a ray to them
+        for ii=1:size(hits,1)
+            drawPoint3d(hits(ii,1),hits(ii,2),hits(ii,3),'.-k');
+            hold on;
+            %drawPolyline3d([pos_IMUinG(1,1),hits(ii,1)],[pos_IMUinG(1,2),hits(ii,2)],[pos_IMUinG(1,3),hits(ii,3)],'-k')
+            hold on;
+        end
+        % Draw current position
+        drawPoint3d(pos_LIDARinG(1,1),pos_LIDARinG(1,2),pos_LIDARinG(1,3),'or'); hold on;
+        drawCoordinates3d([pos_LIDARinG(1,1),pos_LIDARinG(1,2),pos_LIDARinG(1,3)],[rpy_LIDARtoG(1,1),rpy_LIDARtoG(1,2),rpy_LIDARtoG(1,3)],1); hold on;
+        % Draw the global frame
+        drawCoordinates3d([0,0,0],[0,0,0],2)   
+        % Plot path points and their IDs (the given waypoints in IMU frame)
+        for ii=1:size(path_IMUinG,1)
+            drawPoint3d(path_IMUinG(ii,1),path_IMUinG(ii,2),path_IMUinG(ii,3),'or'); hold on;
+            drawCoordinates3d([path_IMUinG(ii,1),path_IMUinG(ii,2),path_IMUinG(ii,3)],[path_IMUinG(ii,4),path_IMUinG(ii,5),path_IMUinG(ii,6)],1); hold on;
+        end
+        text(path_IMUinG(:,1),path_IMUinG(:,2),path_IMUinG(:,3),[repmat('  ',size(path_IMUinG,1),1), num2str((1:size(path_IMUinG,1))')])
+        hold on;
+        % Plot the spline (use IMU rate so it is smooth)
+        plot3(ppval(pp_IMUinG{1},timeimu),ppval(pp_IMUinG{2},timeimu),ppval(pp_IMUinG{3},timeimu),'r');
+        hold on;
+        % Do the labels and the such...
+        axis equal
+        xlabel('x-direction (meters)')
+        ylabel('y-direction (meters)')
+        zlabel('z-direction (meters)')
+        %view([0 90])
+        drawnow;
+    end
     % end timer and print
     fprintf('MAIN: %f seconds to process\n',toc)
 end
@@ -338,7 +344,7 @@ dlmwrite('../output/config_transform.txt',p_IinL','-append', 'precision', 16);
 dlmwrite('../output/config_runtime.txt', totalruntime+timestill);
 
 % our lidar data
-dlmwrite('../output/config_lidar.txt', lidarazimuth, 'precision', 16);
+dlmwrite('../output/config_lidar.txt', lidarzenith, 'precision', 16);
 dlmwrite('../output/config_lidar.txt',lidarresolution,'-append', 'precision', 16);
 
 % our gravity
@@ -386,9 +392,11 @@ end
 fclose(fid);
 
 % figure of the trajectory
-set(0, 'CurrentFigure', fg1)
-set(gcf,'Position',[0 0 900 600])
-print(fg1,'-dpng','-r500','../output/trajectory.png')
+if showrealtimeplot
+    set(0, 'CurrentFigure', fg1)
+    set(gcf,'Position',[0 0 900 600])
+    print(fg1,'-dpng','-r500','../output/trajectory.png')
+end
 
 % debug info
 disp('DATA: Done saving to disk!')
