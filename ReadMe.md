@@ -4,6 +4,13 @@ This repository has a LiDAR-inertial 3D plane simulator in it that allows for cu
 The simplest way to get started is to clone this repository into your ROS workspace, and play around with the example datasets.
 Please read the guides below on how to get started, and see the ReadMe files in the package directories for more details on each package.
 
+## Demo Video
+
+Here is a video of a LiDAR-inertial estimator runnning on the top of this simulator.
+The paper leveraging this simulator "LIPS: LiDAR-Inertial 3D Plane SLAM" will be presented at IROS 2018.
+
+[![IMAGE ALT TEXT](http://img.youtube.com/vi/O5XffJHLaRA/1.jpg)](http://www.youtube.com/watch?v=O5XffJHLaRA "LIPS: LiDAR-Inertial 3D Plane SLAM
+")
 
 ## Package Descriptions
 
